@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ملکه — برگه امروز</title>
+<meta name="robots" content="noindex,nofollow">
+<style>
+:root{
+  --gold:#d8b35a;
+  --muted:#c7bdb3;
+  --velvet1: radial-gradient(circle at 20% 20%, #07122a 0%, #000814 60%);
+  --velvet2: radial-gradient(circle at 80% 20%, #081028 0%, #020412 60%);
+  --velvet3: radial-gradient(circle at 30% 30%, #0b1630 0%, #000817 65%);
+  --velvet4: radial-gradient(circle at 70% 40%, #081218 0%, #02080b 65%);
+  --gold-shadow: 0 10px 30px rgba(216,179,90,0.18);
+  --card-bg: rgba(255,255,255,0.025);
+}
+
+/* پایه */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: "IRANSans", "Vazirmatn", Tahoma, Arial, sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:22px;
+  color:#fff;
+  background:var(--velvet1);
+  transition:background 800ms ease;
+}
+
+/* ظرف اصلی */
+.container{
+  width:100%;
+  max-width:680px;
+  margin:10px;
+  text-align:center;
+}
+
+/* دکمه طلایی کروی (Sphere Glow) */
+.action-wrap{margin-top:18px}
+.sphere-btn{
+  width:120px;
+  height:120px;
+  border-radius:60px;
+  border:none;
+  background: radial-gradient(circle at 35% 30%, #fff8d9 0%, #e8c878 25%, #c2993a 60%, #7a5b23 100%);
+  box-shadow:
+    0 6px 18px rgba(0,0,0,0.6),
+    0 0 40px rgba(216,179,90,0.12),
+    0 0 6px rgba(255,245,200,0.06) inset;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  color:#120b00;
+  font-size:16px;
+  transition: transform .18s ease, box-shadow .18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.sphere-btn:active{ transform: translateY(3px) scale(.995); }
+.sphere-btn:focus{ outline: none; box-shadow: 0 0 28px rgba(216,179,90,0.3); }
+
+/* پالس نور طلایی اطراف دکمه */
+.sphere-glow{
+  position:relative;
+  display:inline-block;
+  border-radius:999px;
+  padding:8px;
+}
+.sphere-glow::before, .sphere-glow::after{
+  content:"";
+  position:absolute;
+  left:50%; top:50%;
+  width:160px; height:160px;
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+.sphere-glow::before{
+  background: radial-gradient(circle, rgba(216,179,90,0.18) 0%, rgba(216,179,90,0.06) 35%, rgba(216,179,90,0) 60%);
+  filter: blur(6px);
+  animation: pulse 2200ms infinite ease-in-out;
+}
+.sphere-glow::after{
+  background: radial-gradient(circle, rgba(216,179,90,0.06) 0%, rgba(216,179,90,0) 60%);
+  filter: blur(18px);
+}
+
+@keyframes pulse{
+  0%{ transform:translate(-50%,-50%) scale(.92); opacity:.85 }
+  50%{ transform:translate(-50%,-50%) scale(1.05); opacity:.6 }
+  100%{ transform:translate(-50%,-50%) scale(.92); opacity:.85 }
+}
+
+/* متن کوچک زیر دکمه */
+.hint{
+  color:var(--muted);
+  margin-top:10px;
+  font-size:14px;
+}
+
+/* کارت محتوا */
+.card{
+  margin-top:26px;
+  display:none;
+  background:var(--card-bg);
+  border-radius:14px;
+  padding:18px 16px;
+  box-shadow: var(--gold-shadow);
+  border:1px solid rgba(216,179,90,0.06);
+  text-align:right;
+}
+
+/* نجوای ملکه (درشت و متمایز) */
+.whisper{
+  direction:rtl;
+  text-align:center;
+  color:#fff3d6;
+  font-weight:800;
+  font-size:18px;
+  margin:6px 0 14px 0;
+  line-height:1.6;
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(216,179,90,0.12);
+}
+
+/* آیتم‌های ردیفی */
+.row{
+  margin:14px 0;
+  font-size:16px;
+  line-height:1.8;
+  position:relative;
+  padding-bottom:12px;
+  transition: transform .35s ease, opacity .35s ease;
+  opacity:0;
+  transform: translateY(10px);
+  text-align:right;
+}
+.row.show{ opacity:1; transform: translateY(0); }
+.row::after{
+  content:"";
+  position:absolute;
+  left:0; right:0; bottom:0;
+  height:3px;
+  border-radius:8px;
+  background: linear-gradient(90deg, rgba(216,179,90,0.7), rgba(216,179,90,0));
+  opacity:.95;
+}
+
+/* عنوان صفحه (نه کلمه‌ی "فال") */
+.header-title{
+  color:var(--gold);
+  font-size:22px;
+  font-weight:800;
+  margin-bottom:6px;
+}
+
+/* دکمه‌های انتهایی */
+.actions-bottom{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:18px;
+  flex-wrap:wrap;
+}
+.small-btn{
+  padding:10px 14px;
+  border-radius:10px;
+  border:1px solid rgba(216,179,90,0.12);
+  background:transparent;
+  color:var(--gold);
+  font-weight:700;
+  cursor:pointer;
+}
+
+/* ریسپانسیو موبایل بهتر */
+@media (max-width:420px){
+  .sphere-btn{ width:108px; height:108px; font-size:15px }
+  .container{ padding:10px }
+  .whisper{ font-size:16px }
+  .row{ font-size:15px; margin:12px 0 }
+}
+
+/* کمک برای نمایش مرتب */
+.hidden{ display:none !important; }
+</style>
+</head>
+<body>
+
+<div class="container" role="main" aria-live="polite">
+  <div class="header-title" id="title">دریافت امروز</div>
+
+  <div class="action-wrap" style="text-align:center;">
+    <div class="sphere-glow" id="glow">
+      <button id="openBtn" class="sphere-btn" aria-label="دریافت">دریافت</button>
+    </div>
+    <div class="hint">کلیک کن</div>
+  </div>
+
+  <div id="card" class="card" role="region" aria-labelledby="title">
+    <div id="whisper" class="whisper" aria-live="polite"></div>
+
+    <div id="r1" class="row">📜 <strong>نظر حافظ:</strong> <span id="poem"></span></div>
+    <div id="r2" class="row">🌙 <strong>تعبیر:</strong> <span id="meaning"></span></div>
+    <div id="r3" class="row">👗 <strong>استایل پیشنهادی روز:</strong> <span id="style"></span></div>
+    <div id="r4" class="row">🐾 <strong>حیوان درون تو:</strong> <span id="animal"></span></div>
+    <div id="r5" class="row">✨ <strong>ویژگی شاعرانه:</strong> <span id="trait"></span></div>
+    <div id="r6" class="row">🔢 <strong>عدد شانس روز:</strong> <span id="lucky"></span></div>
+    <div id="r7" class="row">⏳ <strong>ساعت طلایی:</strong> <span id="goldtime"></span></div>
+    <div id="r8" class="row">🎨 <strong>رنگ شانس:</strong> <span id="color"></span></div>
+
+    <div class="actions-bottom" id="bottomActions" style="display:none">
+      <button id="downloadBtn" class="small-btn" aria-label="دانلود برگه امروز">⬇️ دانلود</button>
+      <button id="shareBtn" class="small-btn" aria-label="اشتراک‌گذاری برگه امروز">📤 اشتراک</button>
+      <a id="follow" class="small-btn" target="_blank" rel="noopener noreferrer" href="https://instagram.com/__queens_magic__">👑 دنبال کن</a>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ========== داده‌ها (فارسی بازبینی شده) ========== */
+const WHISPERS = [
+  "صدای پای فرصت در باغ تو شنیده می‌شود.",
+  "مهربانی‌ای دور، راهت را روشن خواهد کرد.",
+  "نوری پنهان در گوشه‌ای منتظر تو است.",
+  "یک درِ نو به آهستگی به رویت باز می‌شود.",
+  "نسیمی از تغییر، یادت را نوازش خواهد کرد."
+];
+
+const POEMS = [
+  {poem:"دوش دیدم که ملائک در میخانه زدند", meaning:"گشایش و رحمت به زودی به سراغت خواهد آمد."},
+  {poem:"هر نفس آواز عشق می‌رسد از چپ و راست", meaning:"نشانه‌ای از نزدیکیِ خوشی و ارتباط نو در راه است."},
+  {poem:"گفتم غم تو دارم، گفتا غمت سرآید", meaning:"صبوری که نشان دادی، نتیجه‌ای شیرین خواهد داشت."},
+  {poem:"ساقیا آمدن عید مبارک بادت", meaning:"آغازی نو و دل‌پذیر نزدیک است."},
+  {poem:"در ازل پرتو حسنت ز تجلی دم زد", meaning:"نور تازه‌ای بر مسیرت تابیده است."}
+];
+
+const ANIMALS = [
+  {name:"شیر", trait:"غرشی درونت دارد که راهِ پیشرو را می‌گشاید."},
+  {name:"روباه", trait:"ذکاوتت چون نسیم، گره‌ها را باز می‌کند."},
+  {name:"عقاب", trait:"دیدی بلند داری؛ حقیقت را زودتر از دیگران می‌خوانی."},
+  {name:"گرگ", trait:"وفاداری و استقامتت ریشه‌دار و سترگ است."},
+  {name:"قو", trait:"لطافت و وقارت، دل‌ها را آرام می‌کند."}
+];
+
+const COLORS = ["طلایی","مشکی","بنفش","فیروزه‌ای","زمردی","نقره‌ای","آبی دریا","یاقوتی"];
+const STYLES = [
+  "پیراهن مینیمال با گردنبند نقره‌ای و عطر گل‌های سفید",
+  "کت کژوال با دستبند چرمی و رایحه مرکبات",
+  "استایل رسمی ساده با گوشواره ظریف و عطر صندل"
+];
+
+/* ========== کمک‌ها ========== */
+function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function fmtTime(min){ const h=Math.floor(min/60), m=min%60; return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0"); }
+
+/* ========== حفظ برگهٔ روزانه در localStorage (یک بار در روز) ========== */
+const KEY = "queens_sheet_v2";
+function todayKey(){
+  const d=new Date(); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+}
+function loadSaved(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return null;
+    const obj = JSON.parse(raw);
+    if(obj.date === todayKey()) return obj;
+    return null;
+  }catch(e){ return null; }
+}
+function save(obj){
+  obj.date = todayKey();
+  localStorage.setItem(KEY, JSON.stringify(obj));
+}
+
+/* ========== تولید برگه تصادفی ========== */
+function createSheet(){
+  const poem = rand(POEMS);
+  const animal = rand(ANIMALS);
+  const style = rand(STYLES);
+  const color = rand(COLORS);
+  const lucky = randInt(1,12);
+  const start = randInt(8*60,20*60);
+  const end = Math.min(start + randInt(60,180), 23*60);
+  return {
+    whisper: rand(WHISPERS),
+    poem: poem.poem,
+    meaning: poem.meaning,
+    style,
+    animal: animal.name,
+    trait: animal.trait,
+    color,
+    lucky,
+    goldtime: fmtTime(start) + " تا " + fmtTime(end)
+  };
+}
+
+/* ========== اعمال پس‌زمینهٔ مخملی تصادفی برای روز ========== */
+(function setVelvetBG(){
+  const keyBG = "queens_bg_v2";
+  const opts = ["--velvet1","--velvet2","--velvet3","--velvet4"];
+  try{
+    const raw = localStorage.getItem(keyBG);
+    const today = new Date().toDateString();
+    if(raw){
+      const obj = JSON.parse(raw);
+      if(obj.date === today){
+        document.documentElement.style.setProperty("background", "var("+obj.bg+")");
+        return;
+      }
+    }
+    const pick = opts[Math.floor(Math.random()*opts.length)];
+    localStorage.setItem(keyBG, JSON.stringify({date: new Date().toDateString(), bg: pick}));
+    document.documentElement.style.setProperty("background", "var("+pick+")");
+  }catch(e){}
+})();
+
+/* ========== نمایش ترتیبی و رابط کاربری ========== */
+const openBtn = document.getElementById("openBtn");
+const card = document.getElementById("card");
+const whisperEl = document.getElementById("whisper");
+const ids = ["r1","r2","r3","r4","r5","r6","r7","r8"];
+const elems = ids.map(id=>document.getElementById(id));
+const bottomActions = document.getElementById("bottomActions");
+
+function populateAndShow(sheet){
+  whisperEl.textContent = "🔮 نجوای ملکه: " + sheet.whisper;
+  document.getElementById("poem").textContent = sheet.poem;
+  document.getElementById("meaning").textContent = sheet.meaning;
+  document.getElementById("style").textContent = sheet.style;
+  document.getElementById("animal").textContent = sheet.animal;
+  document.getElementById("trait").textContent = sheet.trait;
+  document.getElementById("lucky").textContent = sheet.lucky;
+  document.getElementById("goldtime").textContent = sheet.goldtime;
+  document.getElementById("color").textContent = sheet.color;
+
+  // نمایش کارت و آیتم‌ها ترتیبی
+  card.style.display = "block";
+  elems.forEach(e=>{ e.classList.remove("show"); });
+  let idx=0;
+  function step(){
+    if(idx>=elems.length) {
+      // نمایش دکمه‌های پایین بعد از اتمام
+      document.getElementById("bottomActions").style.display = "flex";
+      return;
+    }
+    elems[idx].classList.add("show");
+    idx++;
+    setTimeout(step,420);
+  }
+  step();
+}
+
+/* ========== کلیک دکمه: بارگذاری یا ساخت برگه و نمایش ========== */
+openBtn.addEventListener("click", function(){
+  // انیمیشن کوچک
+  openBtn.animate([{transform:"translateY(0) scale(1)"},{transform:"translateY(-6px) scale(1.02)"},{transform:"translateY(0) scale(1)"}], {duration:420});
+
+  const saved = loadSaved();
+  if(saved){
+    populateAndShow(saved);
+    return;
+  }
+  const sheet = createSheet();
+  save(sheet);
+  populateAndShow(sheet);
+});
+
+/* ========== دانلود برگه امروز ========== */
+document.getElementById("downloadBtn").addEventListener("click", function(){
+  const lines = [
+    "نجوای ملکه: " + document.getElementById("whisper").innerText.replace("🔮 نجوای ملکه: ",""),
+    "نظر حافظ: " + document.getElementById("poem").innerText,
+    "تعبیر: " + document.getElementById("meaning").innerText,
+    "استایل پیشنهادی روز: " + document.getElementById("style").innerText,
+    "حیوان درون تو: " + document.getElementById("animal").innerText,
+    "ویژگی شاعرانه: " + document.getElementById("trait").innerText,
+    "عدد شانس روز: " + document.getElementById("lucky").innerText,
+    "ساعت طلایی: " + document.getElementById("goldtime").innerText,
+    "رنگ شانس: " + document.getElementById("color").innerText
+  ];
+  const blob = new Blob([lines.join("\n")], {type:'text/plain;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href = url; a.download = "برگه_امروز.txt"; a.click();
+});
+
+/* ========== اشتراک گذاری (Web Share API یا fallback) ========== */
+document.getElementById("shareBtn").addEventListener("click", function(){
+  const text = [
+    document.getElementById("whisper").innerText,
+    "نظر حافظ: " + document.getElementById("poem").innerText,
+    "تعبیر: " + document.getElementById("meaning").innerText,
+    "حیوان درون تو: " + document.getElementById("animal").innerText,
+    "عدد شانس روز: " + document.getElementById("lucky").innerText
+  ].join("\n");
+  if(navigator.share){
+    navigator.share({title: "برگه امروز", text});
+  } else {
+    prompt("متن را کپی کن:", text);
+  }
+});
+
+/* ========== جلوگیری از تکرار آنی (اگر کاربر قبل از بارگذاری مجدد کلیک کند) ========== */
+openBtn.addEventListener("dblclick", function(e){ e.preventDefault(); });
+
+</script>
+</body>
+</html>
